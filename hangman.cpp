@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
+#include <random>
 using namespace std;
 
 bool isletter(string input) {
@@ -145,30 +147,71 @@ void Hangman::draw(int lives) {
 
 int main() {
 	Hangman h;
-	cout << "Wprowadz haslo: " << endl;
-	while (true) {
-		getline(cin, h.word);
+	int x;
+	cout << "Wybierz wersje gry: " << endl;
+	cout << "1. Wylosuj haslo." << endl;
+	cout << "2. Wpisz wlasne haslo" << endl;
+	cin >> x;
+	cin.ignore();
+	switch (x) {
+	case 1: {
+		string line;
+		ifstream words("words.txt");
+		srand(time(0));
+		int currentline = 1;
+		int random = rand() % 100 + 1;
+		while (getline(words, line)) {
+			if (currentline == random) {
+				h.word = line;
+				break;
+			}
+			currentline++;
+		}
 		for (int i = 0; i < h.word.length(); i++) {
 			h.word[i] = toupper(h.word[i]);
 		}
-		if (isletter(h.word) == false) {
-			cout << "Wprowadziles niepoprawne slowo. Wpisz slowo zawierajace tylko znaki z alfabetu." << endl;
-		}
-		else {
-			break;
-		}
-	}
-	while (h.lives > 0 && h.win == false) {
-		system("cls");
-		h.draw(h.lives);
-		h.viewWord(h.word);
-		h.guess(h.word, h.lives);
-		h.check(h.word);
+		while (h.lives > 0 && h.win == false) {
+			system("cls");
+			h.draw(h.lives);
+			h.viewWord(h.word);
+			h.guess(h.word, h.lives);
+			h.check(h.word);
 		}
 		if (h.lives == 0 && h.win == false) {
 			system("cls");
 			h.draw(h.lives);
 			cout << "Haslo to: " << h.word << endl;
 		}
-	
+		break;
+	}
+	case 2:
+	{
+		cout << "Wprowadz haslo: " << endl;
+		while (true) {
+			getline(cin, h.word);
+			for (int i = 0; i < h.word.length(); i++) {
+				h.word[i] = toupper(h.word[i]);
+			}
+			if (isletter(h.word) == false) {
+				cout << "Wprowadziles niepoprawne slowo. Wpisz slowo zawierajace tylko znaki z alfabetu." << endl;
+			}
+			else {
+				break;
+			}
+		}
+		while (h.lives > 0 && h.win == false) {
+			system("cls");
+			h.draw(h.lives);
+			h.viewWord(h.word);
+			h.guess(h.word, h.lives);
+			h.check(h.word);
+		}
+		if (h.lives == 0 && h.win == false) {
+			system("cls");
+			h.draw(h.lives);
+			cout << "Haslo to: " << h.word << endl;
+		}
+		break;
+	}
+	}
 }
