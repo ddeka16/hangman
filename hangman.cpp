@@ -2,6 +2,17 @@
 #include <vector>
 #include <string>
 using namespace std;
+
+bool isletter(string input) {
+	for (int i = 0; i < input.size(); i++) {
+		int uppercaseChar = toupper(input[i]);
+		if ((uppercaseChar < 'A' || uppercaseChar > 'Z') && uppercaseChar != 32) {
+			return false;
+		}
+	}
+	return true;
+}
+
 class Hangman {
 public:
 	int lives = 5;
@@ -22,9 +33,15 @@ char Hangman::guess(string word, int &lives) {
 	cout << "Zgadnij litere: ";
 	while (true) {
 		getline(cin, input);
+		for (int i = 0; i < input.length(); i++) {
+			input[i] = toupper(input[i]);
+		}
 		if (input.length() == 0) {
 			
 			cout << "Nie wprowadziles zadnego znaku. Sprobuj ponownie" << endl;
+		}
+		else if (isletter(input) == false) {
+			cout << "Wprowadziles niedozwolony znak. Wpisz litere" << endl;
 		}
 		else if (input.length() == 1) {
 			letter = input[0];
@@ -124,18 +141,34 @@ void Hangman::draw(int lives) {
 	}
 }
 
+
+
 int main() {
 	Hangman h;
-	getline(cin, h.word);
+	cout << "Wprowadz haslo: " << endl;
+	while (true) {
+		getline(cin, h.word);
+		for (int i = 0; i < h.word.length(); i++) {
+			h.word[i] = toupper(h.word[i]);
+		}
+		if (isletter(h.word) == false) {
+			cout << "Wprowadziles niepoprawne slowo. Wpisz slowo zawierajace tylko znaki z alfabetu." << endl;
+		}
+		else {
+			break;
+		}
+	}
 	while (h.lives > 0 && h.win == false) {
 		system("cls");
 		h.draw(h.lives);
 		h.viewWord(h.word);
 		h.guess(h.word, h.lives);
-		h.check(h.word);		
-	}
-	if (h.lives == 0 && h.win == false) {
-		system("cls");
-		h.draw(h.lives);
-	}
+		h.check(h.word);
+		}
+		if (h.lives == 0 && h.win == false) {
+			system("cls");
+			h.draw(h.lives);
+			cout << "Haslo to: " << h.word << endl;
+		}
+	
 }
